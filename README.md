@@ -1,6 +1,9 @@
 # otp_flutter
 
-A new Flutter project.
+A sample OTP screen in flutter.
+* Bloc + Clean Arch
+
+![otp_ui](https://user-images.githubusercontent.com/94855499/209952765-9a4c0b07-7448-4602-94c4-f276ea026894.png)
 
 ## Getting Started
 
