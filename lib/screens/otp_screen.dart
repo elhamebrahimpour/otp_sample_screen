@@ -56,7 +56,14 @@ class OTPScreen extends StatelessWidget {
             ElevatedButton(
               style: Theme.of(context).elevatedButtonTheme.style,
               onPressed: () {
-                context.read<OTPBloc>().add(OTPVerifiedPressed());
+                context.read<OTPBloc>().add(
+                      OTPVerifiedPressed(
+                        otp1: _fieldOne.text = '',
+                        otp2: _fieldTwo.text = '',
+                        otp3: _fieldThree.text = '',
+                        otp4: _fieldFour.text = '',
+                      ),
+                    );
               },
               child: Text(
                 'verify and continue',
@@ -79,14 +86,14 @@ class OTPScreen extends StatelessWidget {
             SizedBox(
               height: 12,
             ),
-            _getOtpUpdatedState(),
+            _getOtpVrifiesState(),
           ],
         ),
       ),
     );
   }
 
-  Widget _getOtpUpdatedState() {
+  Widget _getOtpVrifiesState() {
     return BlocBuilder<OTPBloc, OTPState>(
       builder: ((context, state) {
         if (state is OTPInitial) {

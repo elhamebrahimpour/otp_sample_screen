@@ -35,9 +35,11 @@ class OTPInput extends StatelessWidget {
           ),
         ),
         onChanged: (value) {
-          if (value.length == 1) {
-            FocusScope.of(context).nextFocus();
-          }
+          value.length == 1
+              ? FocusScope.of(context).nextFocus()
+              : value.isEmpty
+                  ? FocusScope.of(context).previousFocus()
+                  : null;
         },
       ),
     );
