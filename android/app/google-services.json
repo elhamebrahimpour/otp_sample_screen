@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "907071080385",
+    "project_id": "sms-firebase-f0785",
+    "storage_bucket": "sms-firebase-f0785.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:907071080385:android:44d1e5e6b8988f34d7d140",
+        "android_client_info": {
+          "package_name": "com.example.login_otp_verification"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "907071080385-kib3pgpg3m0bjk00fu9f5788gtavca6v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5OQ237li87DTyT2guFuwKrloLvRR-0Tw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "907071080385-kib3pgpg3m0bjk00fu9f5788gtavca6v.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "907071080385-bc2esf9p5imscotjtjkgeil3f2dml1dd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.loginOtpVerification"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:907071080385:android:bbadcf3dc3da7b32d7d140",
+        "android_client_info": {
+          "package_name": "com.example.otp_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "907071080385-kib3pgpg3m0bjk00fu9f5788gtavca6v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5OQ237li87DTyT2guFuwKrloLvRR-0Tw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "907071080385-kib3pgpg3m0bjk00fu9f5788gtavca6v.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "907071080385-bc2esf9p5imscotjtjkgeil3f2dml1dd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.loginOtpVerification"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

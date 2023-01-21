@@ -13,7 +13,6 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   flutter_bloc: ^8.1.1
-  #sms_autofill: ^2.2.0
   alt_sms_autofill: ^1.0.0
   country_list_pick: ^1.0.1+6
   firebase_auth: ^4.2.5

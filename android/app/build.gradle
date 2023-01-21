@@ -68,10 +68,8 @@ flutter {
 }
 
 dependencies {
+    implementation 'com.google.firebase:firebase-auth:20.0.1'
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
+    implementation platform('com.google.firebase:firebase-bom:31.2.0')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    //firebase needs these dependencies
-    implementation "com.google.firebase:firebase-auth:20.0.1"
-    implementation "com.google.android.gms:play-services-auth:19.0.0"
-      // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:31.1.1')
 }

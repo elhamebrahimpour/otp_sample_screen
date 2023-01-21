@@ -1,17 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:otp_sample_screen/constants/custom_colors.dart';
+import 'package:otp_sample_screen/firebase_options.dart';
 import 'package:otp_sample_screen/screens/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  /*
-      FirebaseOptions(
-          apiKey: 'AIzaSyC5OQ237li87DTyT2guFuwKrloLvRR-0Tw',
-          appId: '1:907071080385:android:b6c76ba33a6fe69bd7d140',
-          messagingSenderId: '',
-          projectId: 'sms-firebase-f0785')*/
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApplication());
 }
 
