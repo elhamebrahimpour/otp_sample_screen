@@ -12,8 +12,8 @@ class OTPInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60,
-      width: 60,
+      height: 48,
+      width: 48,
       child: TextField(
         autofocus: autoFocus,
         controller: textEditingController,
@@ -24,7 +24,7 @@ class OTPInput extends StatelessWidget {
         decoration: const InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(
-              Radius.circular(15),
+              Radius.circular(8),
             ),
           ),
           counterText: '',
