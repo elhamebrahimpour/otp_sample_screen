@@ -19,29 +19,25 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController countryCodeController = TextEditingController();
   RoundedLoadingButtonController sendCodeBtnController =
       RoundedLoadingButtonController();
-  String? phonenumber;
 
   //this method handles sign in to the app via phone number
   void signinWithPhoneNumber() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     try {
       await auth.verifyPhoneNumber(
-          phoneNumber: countryCodeController.text + phonenumber!,
-          verificationCompleted: (_) {},
+          phoneNumber:
+              '${countryCodeController.text}${phoneNumberController.text}',
+          verificationCompleted: (_) async {},
           verificationFailed: ((error) {
-            throw Exception();
+            throw Exception(error.toString());
           }),
           codeSent: ((verificationId, forceResendingToken) async {
-            await Future.delayed(Duration(seconds: 2));
             sendCodeBtnController.success();
+            await Future.delayed(Duration(seconds: 2));
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: ((context) => BlocProvider(
-                      create: (context) => OTPBloc(),
-                      child: OTPScreen(
-                        verificationId: verificationId,
-                      ),
-                    )),
+                builder: ((context) =>
+                    OTPScreen(verificationId: verificationId)),
               ),
             );
           }),
@@ -51,6 +47,14 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+/*
+ BlocProvider(
+                      create: (context) => OTPBloc(),
+                      child: OTPScreen(
+                        verificationId: verificationId,
+                      ),
+                    )),
+*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -169,9 +173,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              onChanged: (value) => setState(() {
-                phonenumber = phoneNumberController.text;
-              }),
             ),
           ),
         ],

@@ -28,13 +28,13 @@ class _OTPScreenState extends State<OTPScreen>
   final TextEditingController _fieldFour = TextEditingController();
   final TextEditingController _fieldFive = TextEditingController();
   final TextEditingController _fieldSix = TextEditingController();
-// 'K0B+rPPRqed'
+
   Future smsListener() async {
     String? comingSms = '';
     try {
       while (true) {
         comingSms = await AltSmsAutofill().listenForSms;
-        if (comingSms!.contains('AIzaSyC5OQ237li87DTyT2guFuwKrloLvRR-0Tw')) {
+        if (comingSms!.contains('')) {
           return comingSms.substring(0, 6);
         }
       }
@@ -133,7 +133,20 @@ class _OTPScreenState extends State<OTPScreen>
             SizedBox(
               height: 62,
             ),
-            _getVerifyButton(context),
+            ElevatedButton(
+              onPressed: () async {
+                if (_fieldOne.text.isNotEmpty &&
+                    _fieldTwo.text.isNotEmpty &&
+                    _fieldThree.text.isNotEmpty &&
+                    _fieldFour.text.isNotEmpty &&
+                    _fieldFive.text.isNotEmpty &&
+                    _fieldSix.text.isNotEmpty) {
+                  verifyOTP(widget.verificationId,
+                      '${_fieldOne.text}${_fieldTwo.text}${_fieldThree.text}${_fieldFour.text}${_fieldFive.text}${_fieldSix.text}');
+                }
+              },
+              child: Text('Verify'),
+            ),
             SizedBox(
               height: 62,
             ),
@@ -150,7 +163,6 @@ class _OTPScreenState extends State<OTPScreen>
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _getOtpVrifiedState(),
                 SizedBox(
                   width: 12,
                 ),

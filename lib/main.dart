@@ -1,12 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:otp_sample_screen/constants/custom_colors.dart';
-import 'package:otp_sample_screen/firebase_options.dart';
+//import 'package:otp_sample_screen/firebase_options.dart';
 import 'package:otp_sample_screen/screens/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp();
+  //options: DefaultFirebaseOptions.currentPlatform
   runApp(MyApplication());
 }
 
