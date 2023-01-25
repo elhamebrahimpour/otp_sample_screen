@@ -1,8 +1,7 @@
 import 'package:country_list_pick/country_list_pick.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:otp_sample_screen/bloc/otp_bloc.dart';
 import 'package:otp_sample_screen/constants/custom_colors.dart';
+import 'package:otp_sample_screen/di/firebase_di.dart';
 import 'package:otp_sample_screen/screens/otp_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
@@ -16,18 +15,19 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController phoneNumberController = TextEditingController();
-  final TextEditingController countryCodeController = TextEditingController();
   RoundedLoadingButtonController sendCodeBtnController =
       RoundedLoadingButtonController();
+  String _country_code = '+98';
 
-  //this method handles sign in to the app via phone number
-  void signinWithPhoneNumber() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
+  //this method handles signin/login
+  //to the app via phone number
+  Future sendSmsCode(String mobile, BuildContext context) async {
+    final FirebaseAuth _auth = serviceLocator.get();
     try {
-      await auth.verifyPhoneNumber(
-          phoneNumber:
-              '${countryCodeController.text}${phoneNumberController.text}',
-          verificationCompleted: (_) async {},
+      await _auth.verifyPhoneNumber(
+          phoneNumber: mobile,
+          timeout: const Duration(seconds: 60),
+          verificationCompleted: (AuthCredential authCredential) async {},
           verificationFailed: ((error) {
             throw Exception(error.toString());
           }),
@@ -36,8 +36,10 @@ class _LoginScreenState extends State<LoginScreen> {
             await Future.delayed(Duration(seconds: 2));
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: ((context) =>
-                    OTPScreen(verificationId: verificationId)),
+                builder: ((context) => OTPScreen(
+                      verificationId: verificationId,
+                      phoneNumber: mobile,
+                    )),
               ),
             );
           }),
@@ -47,14 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-/*
- BlocProvider(
-                      create: (context) => OTPBloc(),
-                      child: OTPScreen(
-                        verificationId: verificationId,
-                      ),
-                    )),
-*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,8 +90,12 @@ class _LoginScreenState extends State<LoginScreen> {
             RoundedLoadingButton(
               color: CustomColors.secondColor,
               controller: sendCodeBtnController,
-              onPressed: () => signinWithPhoneNumber(),
-              child: Text('send code'),
+              onPressed: () {
+                final String mobilePhone =
+                    _country_code + phoneNumberController.text.trim();
+                sendSmsCode(mobilePhone, context);
+              },
+              child: Text('Send Code'),
             ),
           ],
         ),
@@ -118,45 +116,21 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       child: Row(
         children: [
-          //we can select country code via this package
+          //we can select country code via this widget
+          //which comes from country_list_pick package
           CountryListPick(
             theme: CountryTheme(
               isDownIcon: false,
-              isShowCode: false,
+              isShowCode: true,
               isShowFlag: true,
               isShowTitle: false,
             ),
-            initialSelection: '+98',
-            /* onChanged: (value) {
+            initialSelection: _country_code,
+            onChanged: (countryCode) {
               setState(() {
-                countryCode = value.toString();
+                _country_code = countryCode.toString();
               });
-            },*/
-            pickerBuilder: (context, countryCode) {
-              if (countryCode != null) {
-                countryCodeController.text = countryCode.dialCode!;
-              }
-              return Image.asset(
-                '${countryCode?.flagUri!}',
-                package: 'country_list_pick',
-                width: 32,
-              );
             },
-          ),
-          SizedBox(
-            width: 36,
-            child: TextField(
-              controller: countryCodeController,
-              enabled: false,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                labelStyle: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
           ),
           Expanded(
             child: TextField(
@@ -165,7 +139,6 @@ class _LoginScreenState extends State<LoginScreen> {
               autofocus: true,
               decoration: InputDecoration(
                 border: InputBorder.none,
-                //labelText: 'enter phone number',
                 hintText: '000 000 0000',
                 hintStyle: TextStyle(
                   color: CustomColors.textColor,

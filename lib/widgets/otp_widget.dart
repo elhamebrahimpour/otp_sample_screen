@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:otp_sample_screen/constants/custom_colors.dart';
 
-class OTPInput extends StatelessWidget {
-  OTPInput(
+class OTPPinInput extends StatelessWidget {
+  OTPPinInput(
       {super.key,
       required this.textEditingController,
       required this.autoFocus});
