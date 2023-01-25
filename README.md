@@ -3,8 +3,6 @@
 A sample OTP screen in flutter.
 * Bloc + Clean Arch
 
-![otp_ui](https://user-images.githubusercontent.com/94855499/209952942-8eba584c-62a6-4447-b895-80fdc2315fae.png)
-
 ## Getting Started
 
 This project is a starting point for a Flutter application.
