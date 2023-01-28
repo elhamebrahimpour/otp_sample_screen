@@ -5,7 +5,7 @@ import 'package:otp_sample_screen/bloc/auth_bloc.dart';
 import 'package:otp_sample_screen/bloc/auth_state.dart';
 import 'package:otp_sample_screen/constants/custom_colors.dart';
 import 'package:otp_sample_screen/di/firebase_di.dart';
-import 'package:otp_sample_screen/firebase_options.dart';
+//import 'package:otp_sample_screen/firebase_options.dart';
 import 'package:otp_sample_screen/screens/home_screen.dart';
 import 'package:otp_sample_screen/screens/login_screen.dart';
 
@@ -15,7 +15,7 @@ void main() async {
   //when we run flutterfire configure command
   //firebase_options class added to the lib => this class is private to each application
   //after that we can use => DefaultFirebaseOptions.currentPlatform
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp();
   await getFirebaseInit();
   runApp(MyApplication());
 }
