@@ -1,9 +1,11 @@
 import 'package:country_list_pick/country_list_pick.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:otp_sample_screen/bloc/auth_bloc.dart';
+import 'package:otp_sample_screen/bloc/auth_event.dart';
+import 'package:otp_sample_screen/bloc/auth_state.dart';
 import 'package:otp_sample_screen/constants/custom_colors.dart';
-import 'package:otp_sample_screen/di/firebase_di.dart';
 import 'package:otp_sample_screen/screens/otp_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,36 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   RoundedLoadingButtonController sendCodeBtnController =
       RoundedLoadingButtonController();
   String _country_code = '+98';
-
-  //this method handles signin/login
-  //to the app via phone number
-  Future sendSmsCode(String mobile, BuildContext context) async {
-    final FirebaseAuth _auth = serviceLocator.get();
-    try {
-      await _auth.verifyPhoneNumber(
-          phoneNumber: mobile,
-          timeout: const Duration(seconds: 60),
-          verificationCompleted: (AuthCredential authCredential) async {},
-          verificationFailed: ((error) {
-            throw Exception(error.toString());
-          }),
-          codeSent: ((verificationId, forceResendingToken) async {
-            sendCodeBtnController.success();
-            await Future.delayed(Duration(seconds: 2));
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: ((context) => OTPScreen(
-                      verificationId: verificationId,
-                      phoneNumber: mobile,
-                    )),
-              ),
-            );
-          }),
-          codeAutoRetrievalTimeout: (String verificationId) {});
-    } on FirebaseAuthException catch (e) {
-      print(e.message);
-    }
-  }
+  late final String phoneNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -87,15 +60,36 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(
               height: 62,
             ),
-            RoundedLoadingButton(
-              color: CustomColors.secondColor,
-              controller: sendCodeBtnController,
-              onPressed: () {
-                final String mobilePhone =
-                    _country_code + phoneNumberController.text.trim();
-                sendSmsCode(mobilePhone, context);
+            //listen to the otp request
+            BlocConsumer<AuthBloc, AuthState>(
+              listener: (context, state) async {
+                if (state is AuthCodeSentState) {
+                  sendCodeBtnController.success();
+                  await Future.delayed(Duration(seconds: 2));
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: ((context) => OTPScreen(
+                            phoneNumber: phoneNumber,
+                          )),
+                    ),
+                  );
+                }
               },
-              child: Text('Send Code'),
+              builder: (context, state) {
+                return RoundedLoadingButton(
+                    color: CustomColors.secondColor,
+                    controller: sendCodeBtnController,
+                    onPressed: () {
+                      setState(() {
+                        phoneNumber =
+                            _country_code + phoneNumberController.text.trim();
+                      });
+                      //send otp
+                      BlocProvider.of<AuthBloc>(context)
+                          .sendSmsCode(phoneNumber);
+                    },
+                    child: Text('Send Code'));
+              },
             ),
           ],
         ),

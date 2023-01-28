@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:otp_sample_screen/bloc/auth_bloc.dart';
 import 'package:otp_sample_screen/constants/custom_colors.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key, required this.phoneNumber}) : super(key: key);
-  final String? phoneNumber;
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('OTP Verification'),
+        title: Text('Home Screen'),
         centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
       body: SafeArea(
         child: Center(
@@ -23,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Successfully Verified',
+                'user login successfully',
                 style: TextStyle(
                     fontSize: 20,
                     color: Colors.black,
@@ -32,13 +29,15 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: 32,
               ),
-              Text(
-                '${widget.phoneNumber}',
-                style: TextStyle(
-                    fontSize: 18,
-                    color: CustomColors.secondColor,
-                    fontWeight: FontWeight.w800),
-              ),
+              TextButton(
+                //logout action handles
+                onPressed: () => BlocProvider.of<AuthBloc>(context).logOut(),
+                child: Text(
+                  'Logout',
+                  style:
+                      TextStyle(fontSize: 16, color: CustomColors.secondColor),
+                ),
+              )
             ],
           ),
         ),

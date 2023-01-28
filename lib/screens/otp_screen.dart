@@ -1,15 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:otp_sample_screen/bloc/auth_bloc.dart';
+import 'package:otp_sample_screen/bloc/auth_state.dart';
 import 'package:otp_sample_screen/constants/custom_colors.dart';
 import 'package:otp_sample_screen/di/firebase_di.dart';
 import 'package:otp_sample_screen/screens/home_screen.dart';
 import 'package:otp_sample_screen/screens/login_screen.dart';
-import 'package:otp_sample_screen/widgets/otp_widget.dart';
+import 'package:otp_sample_screen/widgets/otp_pin_widget.dart';
 
 class OTPScreen extends StatefulWidget {
-  OTPScreen(
-      {super.key, required this.verificationId, required this.phoneNumber});
-  final String verificationId;
+  OTPScreen({super.key, required this.phoneNumber});
   final String phoneNumber;
   @override
   State<OTPScreen> createState() => _OTPScreenState();
@@ -23,24 +24,6 @@ class _OTPScreenState extends State<OTPScreen> {
   final TextEditingController _fieldFive = TextEditingController();
   final TextEditingController _fieldSix = TextEditingController();
   final FirebaseAuth auth = serviceLocator.get();
-
-  Future<void> signIn(String smsCode) async {
-    try {
-      final _creadential = PhoneAuthProvider.credential(
-          verificationId: widget.verificationId, smsCode: smsCode);
-      auth.signInWithCredential(_creadential).then(
-            (userCredential) => Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: ((context) => HomeScreen(
-                      phoneNumber: widget.phoneNumber,
-                    )),
-              ),
-            ),
-          );
-    } on FirebaseAuthException catch (e) {
-      print(e.message);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +68,33 @@ class _OTPScreenState extends State<OTPScreen> {
               SizedBox(
                 height: 62,
               ),
-              _getSignInButton(context),
+              //listen to the action that authenticates usert
+              //if authenticated navigates to the home screen
+              BlocConsumer<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  if (state is AuthLoggedInState) {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: ((context) => HomeScreen()),
+                      ),
+                    );
+                  } else if (state is AuthErrorState) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text('error')));
+                  }
+                },
+                builder: (context, state) {
+                  if (state is AuthVerifingState) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: CustomColors.secondColor,
+                        strokeWidth: 2,
+                      ),
+                    );
+                  }
+                  return _getSignInButton(context);
+                },
+              ),
               SizedBox(
                 height: 62,
               ),
@@ -155,7 +164,8 @@ class _OTPScreenState extends State<OTPScreen> {
             _fieldSix.text.isNotEmpty) {
           String smsCode =
               '${_fieldOne.text.trim()}${_fieldTwo.text.trim()}${_fieldThree.text.trim()}${_fieldFour.text.trim()}${_fieldFive.text.trim()}${_fieldSix.text.trim()}';
-          signIn(smsCode);
+          //verify the user
+          BlocProvider.of<AuthBloc>(context).verifyOTPCode(smsCode);
         }
       },
       child: Text('Sign In'),
