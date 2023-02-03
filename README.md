@@ -1,7 +1,12 @@
 # otp_flutter
 
 A sample OTP screen in flutter.
-* Bloc + Clean Arch
+* Bloc
+* Firebase
+* firebase_auth package
+* firebase_core package
+
+![otp](https://user-images.githubusercontent.com/94855499/216622861-f496607a-8175-4385-a14c-3a0c707872c2.png)
 
 ## Getting Started
 
