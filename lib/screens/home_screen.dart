@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otp_sample_screen/bloc/auth_bloc.dart';
+import 'package:otp_sample_screen/bloc/auth_event.dart';
 import 'package:otp_sample_screen/constants/custom_colors.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -31,7 +32,8 @@ class HomeScreen extends StatelessWidget {
               ),
               TextButton(
                 //logout action handles
-                onPressed: () => BlocProvider.of<AuthBloc>(context).logOut(),
+                onPressed: () =>
+                    BlocProvider.of<AuthBloc>(context).add(SignOutPressed()),
                 child: Text(
                   'Logout',
                   style:

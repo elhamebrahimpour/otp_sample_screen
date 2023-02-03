@@ -2,12 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:otp_sample_screen/bloc/auth_bloc.dart';
+import 'package:otp_sample_screen/bloc/auth_event.dart';
 import 'package:otp_sample_screen/bloc/auth_state.dart';
 import 'package:otp_sample_screen/constants/custom_colors.dart';
 import 'package:otp_sample_screen/di/firebase_di.dart';
 import 'package:otp_sample_screen/screens/home_screen.dart';
 import 'package:otp_sample_screen/screens/login_screen.dart';
 import 'package:otp_sample_screen/widgets/otp_pin_widget.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class OTPScreen extends StatefulWidget {
   OTPScreen({super.key, required this.phoneNumber});
@@ -24,6 +26,9 @@ class _OTPScreenState extends State<OTPScreen> {
   final TextEditingController _fieldFive = TextEditingController();
   final TextEditingController _fieldSix = TextEditingController();
   final FirebaseAuth auth = serviceLocator.get();
+
+  RoundedLoadingButtonController verifyController =
+      RoundedLoadingButtonController();
 
   @override
   Widget build(BuildContext context) {
@@ -68,30 +73,22 @@ class _OTPScreenState extends State<OTPScreen> {
               SizedBox(
                 height: 62,
               ),
-              //listen to the action that authenticates usert
+              //listen to the action that authenticates user
               //if authenticated navigates to the home screen
               BlocConsumer<AuthBloc, AuthState>(
                 listener: (context, state) {
                   if (state is AuthLoggedInState) {
+                    verifyController.success();
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
                         builder: ((context) => HomeScreen()),
                       ),
                     );
                   } else if (state is AuthErrorState) {
-                    ScaffoldMessenger.of(context)
-                        .showSnackBar(SnackBar(content: Text('error')));
+                    verifyController.error();
                   }
                 },
                 builder: (context, state) {
-                  if (state is AuthVerifingState) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: CustomColors.secondColor,
-                        strokeWidth: 2,
-                      ),
-                    );
-                  }
                   return _getSignInButton(context);
                 },
               ),
@@ -154,7 +151,9 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   Widget _getSignInButton(BuildContext context) {
-    return ElevatedButton(
+    return RoundedLoadingButton(
+      color: CustomColors.secondColor,
+      controller: verifyController,
       onPressed: () async {
         if (_fieldOne.text.isNotEmpty &&
             _fieldTwo.text.isNotEmpty &&
@@ -165,7 +164,7 @@ class _OTPScreenState extends State<OTPScreen> {
           String smsCode =
               '${_fieldOne.text.trim()}${_fieldTwo.text.trim()}${_fieldThree.text.trim()}${_fieldFour.text.trim()}${_fieldFive.text.trim()}${_fieldSix.text.trim()}';
           //verify the user
-          BlocProvider.of<AuthBloc>(context).verifyOTPCode(smsCode);
+          BlocProvider.of<AuthBloc>(context).add(SignInPressed(smsCode));
         }
       },
       child: Text('Sign In'),

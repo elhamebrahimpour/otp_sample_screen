@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:otp_sample_screen/bloc/auth_event.dart';
 import 'package:otp_sample_screen/bloc/auth_state.dart';
 import 'package:otp_sample_screen/di/firebase_di.dart';
 
-class AuthBloc extends Cubit<AuthState> {
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final FirebaseAuth _firebaseAuth = serviceLocator.get();
   String? _verificationId;
 
@@ -14,13 +16,19 @@ class AuthBloc extends Cubit<AuthState> {
     } else {
       emit(AuthLoggedOutState());
     }
+
+    on<CodeSentPressed>(_sendCode);
+
+    on<SignInPressed>(_signIn);
+
+    on<SignOutPressed>(_signOut);
   }
 
-  Future sendSmsCode(String phoneNumber) async {
+  Future<void> _sendCode(event, emit) async {
     emit(AuthVerifingState());
     await _firebaseAuth.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      timeout:  Duration(seconds: 10),
+      phoneNumber: event.phoneNumber,
+      timeout: Duration(seconds: 6),
       verificationCompleted: (PhoneAuthCredential authCredential) {
         signInWithPhoneNumber(authCredential);
       },
@@ -34,15 +42,22 @@ class AuthBloc extends Cubit<AuthState> {
         _verificationId = verificationId;
       },
     );
+    emit(AuthCodeSentState());
   }
 
-  Future verifyOTPCode(String otpCode) async {
+  Future<void> _signIn(event, emit) async {
     emit(AuthVerifingState());
     PhoneAuthCredential _creadential = PhoneAuthProvider.credential(
-        verificationId: _verificationId!, smsCode: otpCode);
+        verificationId: _verificationId!, smsCode: event.smsCode);
     signInWithPhoneNumber(_creadential);
   }
 
+  Future<void> _signOut(event, emit) async {
+    await _firebaseAuth.signOut();
+    emit(AuthLoggedOutState());
+  }
+
+//use phone credential to signin to the app
   Future<void> signInWithPhoneNumber(PhoneAuthCredential credential) async {
     try {
       UserCredential userCredential =
@@ -50,15 +65,6 @@ class AuthBloc extends Cubit<AuthState> {
       if (userCredential.user != null) {
         emit(AuthLoggedInState(userCredential.user!));
       }
-    } on FirebaseAuthException catch (e) {
-      emit(AuthErrorState(e.message.toString()));
-    }
-  }
-
-  Future<void> logOut() async {
-    try {
-      await _firebaseAuth.signOut();
-      emit(AuthLoggedOutState());
     } on FirebaseAuthException catch (e) {
       emit(AuthErrorState(e.message.toString()));
     }

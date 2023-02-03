@@ -5,9 +5,9 @@ class CodeSentPressed extends AuthEvent {
   CodeSentPressed(this.phoneNumber);
 }
 
-class LoginPressed extends AuthEvent {
+class SignInPressed extends AuthEvent {
   String smsCode;
-  LoginPressed(this.smsCode);
+  SignInPressed(this.smsCode);
 }
 
-class LogoutPressed extends AuthEvent {}
+class SignOutPressed extends AuthEvent {}

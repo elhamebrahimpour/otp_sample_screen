@@ -27,71 +27,68 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      body: _getMainContent(context),
-    );
-  }
-
-  Widget _getMainContent(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 300,
-              width: 300,
-              child: Image.asset('images/verification.webp'),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 52),
-              child: Text(
-                'We need to register your phone number before getting started!',
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline2!
-                    .copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 300,
+                width: 300,
+                child: Image.asset('images/verification.webp'),
               ),
-            ),
-            SizedBox(
-              height: 42,
-            ),
-            _getmobileContainer(context),
-            SizedBox(
-              height: 62,
-            ),
-            //listen to the otp request
-            BlocConsumer<AuthBloc, AuthState>(
-              listener: (context, state) async {
-                if (state is AuthCodeSentState) {
-                  sendCodeBtnController.success();
-                  await Future.delayed(Duration(seconds: 2));
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: ((context) => OTPScreen(
-                            phoneNumber: phoneNumber,
-                          )),
-                    ),
-                  );
-                }
-              },
-              builder: (context, state) {
-                return RoundedLoadingButton(
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 52),
+                child: Text(
+                  'We need to register your phone number before getting started!',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline2!
+                      .copyWith(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+              ),
+              SizedBox(
+                height: 42,
+              ),
+              _getmobileContainer(context),
+              SizedBox(
+                height: 62,
+              ),
+              //listen to the otp request
+              BlocConsumer<AuthBloc, AuthState>(
+                listener: (context, state) async {
+                  if (state is AuthCodeSentState) {
+                    sendCodeBtnController.success();
+                    await Future.delayed(Duration(seconds: 4));
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: ((context) => OTPScreen(
+                              phoneNumber: phoneNumber,
+                            )),
+                      ),
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  return RoundedLoadingButton(
                     color: CustomColors.secondColor,
                     controller: sendCodeBtnController,
-                    onPressed: () {
+                    onPressed: () async {
                       setState(() {
                         phoneNumber =
                             _country_code + phoneNumberController.text.trim();
                       });
                       //send otp
                       BlocProvider.of<AuthBloc>(context)
-                          .sendSmsCode(phoneNumber);
+                          .add(CodeSentPressed(phoneNumber));
                     },
-                    child: Text('Send Code'));
-              },
-            ),
-          ],
+                    child: Text('Send Code'),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
